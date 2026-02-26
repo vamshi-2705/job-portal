@@ -21,7 +21,7 @@ export const register = createAsyncThunk(
     async (userData, thunkAPI) => {
         try {
             const response = await axios.post(
-                `${API_BASE_URL}/auth/register`,
+                `${API_BASE_URL}/api/auth/register`,
                 userData
             );
 
@@ -49,7 +49,7 @@ export const login = createAsyncThunk(
     async (userData, thunkAPI) => {
         try {
             const response = await axios.post(
-                `${API_BASE_URL}/auth/login`,
+                `${API_BASE_URL}/api/auth/login`,
                 userData
             );
 
@@ -73,7 +73,7 @@ export const login = createAsyncThunk(
 
 // ================= LOGOUT =================
 export const logout = createAsyncThunk('auth/logout', async () => {
-    await axios.post(`${API_BASE_URL}/auth/logout`);
+    await axios.post(`${API_BASE_URL}/api/auth/logout`);
     localStorage.removeItem('user');
 });
 
@@ -83,7 +83,7 @@ export const updateProfile = createAsyncThunk(
     async (userData, thunkAPI) => {
         try {
             const response = await axios.put(
-                `${API_BASE_URL}/auth/profile`,
+                `${API_BASE_URL}/api/auth/profile`,
                 userData
             );
 
