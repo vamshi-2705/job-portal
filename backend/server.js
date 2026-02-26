@@ -1,0 +1,64 @@
+const express = require('express');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
+const path = require('path');
+const connectDB = require('./config/db');
+const { errorHandler } = require('./middleware/errorMiddleware');
+const cron = require('node-cron');
+dotenv.config();
+const { syncExternalJobs } = require('./controllers/jobController');
+
+// Run every 6 hours
+cron.schedule('0 */6 * * *', () => {
+    console.log('⏳ Running scheduled job sync...');
+    syncExternalJobs();
+});
+
+// Load env vars
+
+
+// Connect to database
+connectDB();
+
+const app = express();
+app.use(cors());
+
+// Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(
+    cors({
+        origin: process.env.CLIENT_URL || 'http://localhost:5173',
+        credentials: true,
+    })
+);
+app.use(cookieParser());
+if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'));
+}
+
+// Route files
+const authRoutes = require('./routes/authRoutes');
+const jobRoutes = require('./routes/jobRoutes');
+const applicationRoutes = require('./routes/applicationRoutes');
+const userRoutes = require('./routes/userRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
+
+// Mount routes
+app.use('/api/auth', authRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/upload', uploadRoutes);
+
+// Root route
+app.get('/', (req, res) => res.send('API is running...'));
+
+// Error handler
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`));
