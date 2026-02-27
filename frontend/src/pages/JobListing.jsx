@@ -210,9 +210,10 @@ const JobListing = () => {
                     ) : (
                         <>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                                {jobs.map((job) => (
-                                    <JobCard key={job._id} job={job} />
-                                ))}
+                                {Array.isArray(jobs) &&
+                                    jobs.map((job) => (
+                                        <JobCard key={job._id} job={job} />
+                                    ))}
                             </div>
 
                             {page < pages && (

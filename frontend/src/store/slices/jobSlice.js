@@ -112,10 +112,19 @@ export const jobSlice = createSlice({
             .addCase(getJobs.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.isSuccess = true;
-                state.jobs = action.payload.jobs;
-                state.page = action.payload.page;
-                state.pages = action.payload.pages;
-                state.total = action.payload.total;
+
+                // SAFE HANDLING
+                if (Array.isArray(action.payload)) {
+                    state.jobs = action.payload;
+                    state.page = 1;
+                    state.pages = 1;
+                    state.total = action.payload.length;
+                } else {
+                    state.jobs = action.payload.jobs || [];
+                    state.page = action.payload.page || 1;
+                    state.pages = action.payload.pages || 1;
+                    state.total = action.payload.total || 0;
+                }
             })
             .addCase(getJobs.rejected, (state, action) => {
                 state.isLoading = false;
